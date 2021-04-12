@@ -1,13 +1,6 @@
 <template>
   <div id="app">
     <router-view> </router-view>
-
-    <!-- <div v-for="(scene, i) in macbeth" :key="i" style="margin-bottom:100px;">
-      <div>{{ scene.title }}</div>
-      <div v-for="(line, j) in scene.lines" :key="j" :style="getStyle(line)">
-        {{ line.value }}
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -17,6 +10,26 @@ import { Component, Vue } from "vue-property-decorator";
 /*
 NOTES: If play or character or whatever is not in list, need to show "404" page
 
+[x] TODO: Get curves back
+
+figure outhow to share data (char colors)...
+Feels like need to pass in to runRidgelines, at the least. Butneed to do more...
+Scene needs to recompute or know about playBreakdown, to get speakerAmts...
+Maybe browser cache is smart enough to handle it?
+
+Clean up data stuff
+
+TODO: Add character colors! (maybe text shadow to lines??)
+
+TODO: Add character view
+
+TODO: Add "piecharts"
+
+TODO: Search!!
+
+TODO: Filter by speech length....within a play? Across all plays?
+
+TODO: show interactions....relationships....punctuation habits....speech percentages....
 */
 
 @Component({})
@@ -26,7 +39,7 @@ export default class App extends Vue {}
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-
+  user-select: none;
   color: #2c3e50;
   padding: 1rem;
 }
@@ -79,13 +92,13 @@ svg {
   stroke: #fff;
 }
 
-.area {
+/* .area {
   fill: #448cab;
 }
 
 .activity:nth-child(odd) .area {
   fill: #5ca3c1;
-}
+} */
 
 .activity:nth-child(odd) .area.active {
   fill: gold;

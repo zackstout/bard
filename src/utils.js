@@ -19,6 +19,21 @@ export const emojiRelationships = {
   "childs": "" // redundant?
 }
 
+export const CHAR_COLORS = [
+  "#6495ED",
+  "#40E0D0",
+  "#DE3163",
+  "#CCCCFF",
+  "#9FE2BF",
+  "#FFBF00",
+  "navy",
+  "maroon",
+  "teal",
+  "black",
+  // "white",
+  // "pink",
+  // "coral",
+];
 
 export const getSceneBreakdown = (scene) => {
   if (!scene.lines) return { numLines: 0, speakerAmts: [] };
@@ -137,11 +152,6 @@ function getSpeakers(scenes) {
 }
 
 
-// function getCharColor(idx) {
-//     // console.log("get fill", idx);
-//     if (idx < CHAR_COLORS.length) return CHAR_COLORS[idx];
-//     return "gray";
-//   }
 
 function slug(name) {
   return name.replace(/\s/g, "_");
@@ -230,41 +240,32 @@ function slug(name) {
 
 
 
+export const getCharColor = (idx) => {
+  // console.log("get fill", idx);
+  if (idx < CHAR_COLORS.length) return CHAR_COLORS[idx];
+  return "gray";
+};
 
+export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 300, overlap = 0.6, speakerAmts = []) => {
 
+  const margin = { left: 75, top: 30, bottom: -30, right: 0 };
+  const w = width - margin.left;
+  const h = height - margin.top - margin.bottom;
 
-
-// var margin = { top: 30, right: 20, bottom: 100, left: 180 },
-//   width = window.innerWidth - margin.left - margin.right,
-//   height = window.innerHeight - margin.top - margin.bottom;
-
-
-
-
-export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 300, overlap = 0.6) => {
-
-  // Percent two area charts can overlap
-
-  // TODO: This affects the top one weirdly...add margin top?
+  // TODO: This affects the top one weirdly...add margin top? Yeah...need more for fewer speakers
+  // Basicaclly areaChartHeightshould control marginTOp
   // var overlap = 0.6;
 
-  // NOTE: To change from scene/line, change this fn, and hcange spkrs/spkrs2
   var x = function (d) {
-    // return d.sceneIdx;
-    // console.log("d..", d);
-
     return d.chunkIdx;
-    // return d.lineNo;
   },
-    xScale = d3.scaleLinear().range([0, width]),
-    // xScale = d3.range([0, width]),
+    xScale = d3.scaleLinear().range([0, w]),
     xValue = function (d) {
       return xScale(x(d));
     },
     xAxis = d3.axisBottom(xScale);
 
   var y = function (d) {
-    // console.log("d...", d);
     return d.value;
   },
     yScale = d3.scaleLinear(),
@@ -273,55 +274,39 @@ export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 30
     };
 
   var speaker = function (d) {
-    // console.log("get sp..", d);
     return d[0];
   },
     speakerScale = d3.scaleBand().range([0, height]),
     speakerValue = function (d) {
-      // console.log("sprkcl", speaker(d));
       return speakerScale(speaker(d));
     },
     speakerAxis = d3.axisLeft(speakerScale);
 
   // Try  different  curve types!
-  var area = d3.area().x(xValue).y1(yValue);
-  // .curve(d3.curveCardinal);
+  var area = d3.area().x(xValue).y1(yValue).curve(d3.curveCardinal);
 
   var line = area.lineY1();
 
 
+  // ==================
 
   d3.selectAll(".ridges").remove();
-
-  const margin = { left: 75, top: 0, bottom: 0, right: 0 };
 
   var svg = d3
     .select(".ridges-container")
     .append("svg")
     .attr("class", "ridges")
-    .attr("width", width - margin.left)
-    .attr("height", height - margin.top)
+    .attr("width", w)
+    .attr("height", h)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  // d3.json(`./assets/${playName}.json`, function (error, dataFlat) {
-  // if (error) throw error;
-
   const dataFlat = playData;
-
   const spkrs3 = getLinesBySpeakerByChunk(dataFlat, chunkSize);
-
   // console.log("got it", spkrs3);
 
   var data = d3
     .group(spkrs3, d => d.speaker)
-  // .nest()
-  // .key(function (d) {
-  //   return d.speaker;
-  // })
-  // .entries(spkrs3);
-
-  // console.log("group", data, data.size, data.keys());
 
   xScale.domain(d3.extent(spkrs3, x));
 
@@ -330,7 +315,7 @@ export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 30
     data.keys()
   );
 
-  var areaChartHeight = (1 + overlap) * (height / speakerScale.domain().length);
+  var areaChartHeight = (1 + overlap) * (h / speakerScale.domain().length);
   // console.log("hgt", areaChartHeight);
   yScale.domain(d3.extent(spkrs3, y)).range([areaChartHeight, 0]);
 
@@ -339,7 +324,7 @@ export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 30
   svg
     .append("g")
     .attr("class", "axis axis--x")
-    .attr("transform", "translate(0," + height + ")")
+    .attr("transform", "translate(0," + h + ")")
     .call(xAxis);
 
   svg.append("g").attr("class", "axis axis--activity").call(speakerAxis);
@@ -383,6 +368,10 @@ export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 30
     .attr("class", "area")
     .attr("id", function (d, i) {
       return `area-${slug(d[0])}`;
+    })
+    .attr("fill", function (d) {
+      const idx = speakerAmts.findIndex(s => s.speaker === d[0]);
+      return getCharColor(idx);
     })
     .datum(function (d) {
       const x = d[1];

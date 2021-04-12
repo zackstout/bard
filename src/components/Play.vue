@@ -6,7 +6,15 @@
 
     <div>
       <h3>Characters</h3>
-      <div class="click" v-for="char in characters" :key="char" @click="goCharacter(char)">{{ char }}</div>
+      <div
+        class="click"
+        v-for="(char, i) in characters"
+        :key="char"
+        @click="goCharacter(char)"
+        :style="getCharStyle(i)"
+      >
+        {{ char }}
+      </div>
     </div>
 
     <div>
@@ -18,7 +26,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { plays, getPlayBreakdown, runRidgelines } from "@/utils";
+import { plays, getPlayBreakdown, runRidgelines, getCharColor } from "@/utils";
 
 import axios from "axios";
 import * as d3 from "d3";
@@ -34,7 +42,8 @@ export default class Play extends Vue {
       .get(`./plays/${this.play}.json`)
       .then((r) => {
         this.playData = r.data;
-        runRidgelines(this.playData, 10, window.innerWidth, 600);
+        const bd = getPlayBreakdown(this.playData);
+        runRidgelines(this.playData, 10, window.innerWidth, 600, 0.6, bd.speakerAmts);
       })
       .catch((e) => console.error("e", e));
   }
@@ -51,6 +60,13 @@ export default class Play extends Vue {
 
   get scenes() {
     return this.playData.map((scene: any) => scene.title);
+  }
+
+  getCharStyle(charIdx: number) {
+    const col = getCharColor(charIdx);
+    return {
+      color: col,
+    };
   }
 
   mounted() {

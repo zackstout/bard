@@ -8,7 +8,7 @@ import {
 } from 'd3-scale';
 
 
-import { area } from 'd3-shape';
+import { area, curveCardinal } from 'd3-shape';
 
 // import { nest } from 'd3-collection';
 
@@ -28,5 +28,6 @@ export default {
     axisLeft,
     area,
     group,
-    extent
+    extent,
+    curveCardinal
 };
