@@ -19,6 +19,8 @@
 
       <div class="ridges-container"></div>
 
+      <div class="line"></div>
+
       <div class="charts-container">
         <div class="chart-container">
           <h3>Characters</h3>
@@ -33,10 +35,17 @@
           </div>
         </div>
       </div>
-      <div>
+
+      <div class="line"></div>
+
+      <div class="chart-container">
         <h3>Scenes</h3>
-        <div class="click" v-for="scene in scenes" :key="scene" @click="goScene(scene)">{{ scene }}</div>
+
+        <div class="pie-container"></div>
+        <!-- <div class="click" v-for="scene in scenes" :key="scene" @click="goScene(scene)">{{ scene }}</div> -->
       </div>
+
+      <div class="line"></div>
 
       <div>
         <h3>Speeches</h3>
@@ -74,6 +83,8 @@ import {
   getInteractionTotals,
   runInteractions,
   runCharacters,
+  getTotalMarks,
+  runPiecharts,
 } from "@/utils";
 
 import axios from "axios";
@@ -116,6 +127,11 @@ export default class Play extends Vue {
         runInteractions(totals.slice(0, 10), bd.speakerAmts, chartWidth, chartHeight);
 
         runCharacters(bd, chartWidth - 25, chartHeight);
+
+        runPiecharts(this.playData, bd.speakerAmts, window.innerWidth - 200, 400);
+
+        // const qmarks = getTotalMarks(this.playData, "?");
+        // console.log("qmarks", qmarks, (100 * qmarks.total) / qmarks.allChars);
       })
       .catch((e) => console.error("e", e));
   }
@@ -208,6 +224,7 @@ export default class Play extends Vue {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 2rem;
 }
 
 .side-play {
@@ -218,4 +235,15 @@ export default class Play extends Vue {
 .side-play:hover {
   opacity: 0.5;
 }
+
+.line {
+  height: 1px;
+  width: 100%;
+
+  background: lightgray;
+}
+
+/* .pie-container .axis .domain {
+  display: block;
+} */
 </style>

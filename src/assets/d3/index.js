@@ -7,6 +7,7 @@ import {
     scaleBand
 } from 'd3-scale';
 
+import { hierarchy, treemap } from 'd3-hierarchy';
 
 import { area, curveCardinal } from 'd3-shape';
 
@@ -29,5 +30,7 @@ export default {
     area,
     group,
     extent,
-    curveCardinal
+    curveCardinal,
+    hierarchy,
+    treemap
 };

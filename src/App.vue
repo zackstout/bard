@@ -14,6 +14,8 @@ NOTES: If play or character or whatever is not in list, need to show "404" page
 
 [x] TODO: Get curves back
 
+[ ] Hmm...brutus_lucius interaction rate looks way too high...
+
 figure outhow to share data (char colors)...
 Feels like need to pass in to runRidgelines, at the least. Butneed to do more...
 Scene needs to recompute or know about playBreakdown, to get speakerAmts...
@@ -29,7 +31,7 @@ Fix width of clickable items
 
 TODO: Add character view
 
-TODO: Add "piecharts"
+[x] TODO: Add "piecharts"
 
 TODO: Search!!
 

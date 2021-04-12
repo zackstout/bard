@@ -23,7 +23,10 @@ export const plays = [
   { value: "titus", label: "Titus Andronicus" },
   { value: "troilus_cressida", label: "Troilus & Cressida" },
   { value: "twelfth_night", label: "Twelfth Night" },
-];
+].sort((a, b) => a.value > b.value);
+
+console.log("plays", plays);
+
 
 export const emojiRelationships = {
   "murders": "🔫",
@@ -34,7 +37,8 @@ export const emojiRelationships = {
   "commands": "", // redundant?
   "parents": "",
   "childs": "" // redundant?
-}
+};
+
 
 export const CHAR_COLORS = [
   "#6495ED",
@@ -51,7 +55,6 @@ export const CHAR_COLORS = [
   // "pink",
   // "coral",
 ];
-
 
 
 export const getSceneBreakdown = (scene) => {
@@ -84,9 +87,7 @@ export const getSceneBreakdown = (scene) => {
 };
 
 
-
-
-// TODOO: refacator to use getScenebrekadown
+// TODO: refacator to use getScenebrekadown
 export const getPlayBreakdown = (scenes) => {
   let numLines = 0;
   const speakers = {};
@@ -105,9 +106,6 @@ export const getPlayBreakdown = (scenes) => {
         speakers[line.speaker]++;
       });
   });
-
-
-  // console.log("spkrs", speakers);
 
   const speakerAmts = Object.keys(speakers)
     .map((speaker) => {
@@ -260,7 +258,6 @@ export const getInteractionTotals = (interactions) => {
   });
 
   // res is an object like {"Banquo_Macbeth": 42, ...}
-
   return Object.keys(res)
     .map((pair) => {
       return { pair, value: res[pair] };
@@ -276,6 +273,134 @@ export const getCharColor = (idx) => {
   if (idx < CHAR_COLORS.length) return CHAR_COLORS[idx];
   return "gray";
 };
+
+
+export const getTotalMarks = (scenes, target) => {
+  let total = 0;
+  let allChars = 0;
+
+  scenes.forEach(scene => {
+    scene.lines.forEach(line => {
+      line.value.split("").forEach(char => {
+        if (char === target) total++;
+        allChars++;
+      });
+    });
+  });
+
+  return { total, allChars };
+};
+
+
+// =================================================================================
+// CHARTS
+// =================================================================================
+export const runPiecharts = (playData, speakerAmts = [], width = 500, height = 350) => {
+  const margin = { left: 80, top: 0, bottom: 0, right: 0 };
+  const w = width + margin.left + margin.right;
+  const h = height + margin.top + margin.bottom;
+
+  d3.selectAll(".pie").remove();
+
+  var svg = d3
+    .select(".pie-container")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("class", "pie")
+    .append("g");
+
+  console.log('running piecharts', svg)
+
+  // =======
+
+  const scenesPerAct = {};
+  playData.forEach(scene => {
+    const [actNum, sceneNum] = scene.title.split(".").map((x) => parseInt(x) - 1);
+    if (!scenesPerAct.hasOwnProperty(actNum)) {
+      scenesPerAct[actNum] = 0;
+    }
+    scenesPerAct[actNum]++;
+  });
+
+  const maxScenesPerAct = Math.max(...Object.keys(scenesPerAct).map(key => scenesPerAct[key]));
+  console.log("max..", maxScenesPerAct);
+
+  playData.forEach((scene) => {
+    const bd = getSceneBreakdown(scene);
+
+    const treeData = {
+      children: bd.speakerAmts.map((amt, i) => {
+        // TODO: index must be index in playBreeakdown.speakerAmts
+        // const i
+        const charName = amt.speaker;
+        const charIdx = speakerAmts.findIndex((x) => x.speaker === charName);
+        // return getCharColor(charIdx);
+        return { ...amt, ...{ fill: getCharColor(charIdx) } };
+      }),
+    };
+
+    // console.log(scene);
+
+    const [actNum, sceneNum] = scene.title.split(".").map((x) => parseInt(x) - 1);
+
+    var root = d3.hierarchy(treeData).sum(function (d) {
+      return d.value;
+    });
+
+    // const WIDTH_SCL = 0.17;
+
+    // TODO: Not correct.....
+    const WIDTH_SCL = 1 / (maxScenesPerAct + 1);
+    const HEIGHT_SCL = 0.17;
+    const PADDING = 10;
+
+    d3
+      .treemap()
+      // .size([(width * scene.lines.length) / avgNumLines, (height * scene.lines.length) / avgNumLines])
+      .size([(width - margin.left - PADDING * maxScenesPerAct) * WIDTH_SCL, height * HEIGHT_SCL])
+      .padding(2)(root);
+
+    svg
+      .selectAll("any_text_here_doesnt_matter")
+      .data(root.leaves())
+      .enter()
+      .append("rect")
+      .attr("x", function (d) {
+        return d.x0;
+      })
+      .attr("y", function (d) {
+        return d.y0;
+      })
+      .attr("width", function (d) {
+        return d.x1 - d.x0;
+      })
+      .attr("height", function (d) {
+        return d.y1 - d.y0;
+      })
+      .style("stroke", "black")
+      .style("fill", function (d) {
+        // console.log("f", d.data.fill);
+        return d.data.fill;
+        // return "blue";
+      })
+      .attr("transform", function (d) {
+        return `translate(${margin.left + sceneNum * (width * WIDTH_SCL + PADDING)}, ${actNum * (height * HEIGHT_SCL + PADDING)})`;
+      })
+  });
+
+  // Y axis
+  var y = d3.scaleBand()
+    .range([0, height])
+    .domain([0, 1, 2, 3, 4].map(n => `Act ${n + 1}`))
+    .padding(.1);
+  svg.append("g")
+    .attr("transform", `translate(${margin.left - 10},0)`)
+    .call(d3.axisLeft(y))
+    .selectAll("text")
+    .attr("fill", "black")
+};
+
 
 
 
