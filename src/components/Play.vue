@@ -1,6 +1,18 @@
 <template>
   <div style="overflow:hidden;">
-    <div id="sidebar"></div>
+    <div id="sidebar">
+      <div style="padding:1rem;">
+        <div
+          :style="{ 'font-weight': play === p.value ? 'bold' : '' }"
+          style="margin:8px 0; cursor:pointer;"
+          v-for="p in plays"
+          :key="p.value"
+          @click="goPlay(p.value)"
+        >
+          {{ p.label }}
+        </div>
+      </div>
+    </div>
 
     <div id="main">
       <h2>{{ playLabel }}</h2>
@@ -20,12 +32,20 @@
       </div>
     </div> -->
 
-      <div>
-        <h3>Interactions</h3>
+      <div class="charts-container">
+        <div class="chart-container">
+          <h3>Characters</h3>
+          <div class="characters-container"></div>
+        </div>
 
-        <div class="interactions-container"></div>
+        <div>
+          <div class="chart-container">
+            <h3>Interactions</h3>
+
+            <div class="interactions-container"></div>
+          </div>
+        </div>
       </div>
-
       <div>
         <h3>Scenes</h3>
         <div class="click" v-for="scene in scenes" :key="scene" @click="goScene(scene)">{{ scene }}</div>
@@ -66,6 +86,7 @@ import {
   getCharacterInteractions,
   getInteractionTotals,
   runInteractions,
+  runCharacters,
 } from "@/utils";
 
 import axios from "axios";
@@ -79,6 +100,15 @@ export default class Play extends Vue {
   minLengthSelectOption = 20;
 
   playData: any = [];
+
+  mounted() {
+    this.loadData();
+  }
+
+  @Watch("$route")
+  routeChanged() {
+    this.loadData();
+  }
 
   loadData() {
     axios
@@ -95,9 +125,18 @@ export default class Play extends Vue {
         const totals = getInteractionTotals(charInteractions);
         // console.log("totals", totals);
 
-        runInteractions(totals.slice(0, 10), bd.speakerAmts, window.innerWidth - 150, 200);
+        const chartWidth = (window.innerWidth - 400) / 2;
+        const chartHeight = 300;
+
+        runInteractions(totals.slice(0, 10), bd.speakerAmts, chartWidth, chartHeight);
+
+        runCharacters(bd, chartWidth - 25, chartHeight);
       })
       .catch((e) => console.error("e", e));
+  }
+
+  get plays() {
+    return plays;
   }
 
   get speeches() {
@@ -142,29 +181,16 @@ export default class Play extends Vue {
     };
   }
 
-  mounted() {
-    this.loadData();
-
-    //   // const speeches = getSpeeches(dataFlat[1]);
-    //   // console.log("speeches", speeches);
-    //   //   const charInteractions = getCharacterInteractions(dataFlat);
-    //   //   console.log("ints", charInteractions);
-    //   //   const totals = getInteractionTotals(charInteractions);
-    //   //   console.log("tots", totals);
-    //   //   // const breakdown = getSceneBreakdown(dataFlat[0]);
-    //   //   // console.log("bd", breakdown);
-    //   //   const playBreakdown = getPlayBreakdown(dataFlat);
-    //   //   console.log("play bd", playBreakdown);
-    //   //   // const spkrs = getLinesBySpeakerByScene(dataFlat);
-    //   //   const spkrs3 = getLinesBySpeakerByChunk(dataFlat, chunkSize);
-  }
-
   goCharacter(name: string) {
     this.$router.push(`/${this.play}/characters/${name}`);
   }
 
   goScene(scene: string) {
     this.$router.push(`/${this.play}/${scene}`);
+  }
+
+  goPlay(play: string) {
+    this.$router.push(`/${play}`);
   }
 }
 </script>
@@ -173,10 +199,11 @@ export default class Play extends Vue {
 #sidebar {
   width: 150px;
   height: 100%;
-  background: lightblue;
+  background: rgb(235, 235, 235);
   position: fixed;
   top: 0;
   left: 0;
+  /* padding: 1rem; */
 }
 
 #main {
@@ -186,5 +213,15 @@ export default class Play extends Vue {
   left: 150px;
   padding: 1rem;
   overflow: hidden;
+}
+
+.charts-container {
+  display: flex;
+}
+
+.chart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>

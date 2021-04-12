@@ -35,6 +35,8 @@ export const CHAR_COLORS = [
   // "coral",
 ];
 
+
+
 export const getSceneBreakdown = (scene) => {
   if (!scene.lines) return { numLines: 0, speakerAmts: [] };
   const numLines = scene.lines.filter((l) => l.type === "text").length;
@@ -63,6 +65,8 @@ export const getSceneBreakdown = (scene) => {
     speakerAmts,
   };
 };
+
+
 
 
 // TODOO: refacator to use getScenebrekadown
@@ -99,6 +103,7 @@ export const getPlayBreakdown = (scenes) => {
     speakerAmts,
   };
 };
+
 
 
 
@@ -157,6 +162,9 @@ function slug(name) {
   return name.replace(/\s/g, "_");
 }
 
+
+
+
 export const getSpeeches = (scene) => {
   const speeches = [];
 
@@ -189,6 +197,9 @@ export const getSpeeches = (scene) => {
   return speeches;
 };
 
+
+
+
 //   /*
 //   Idea here is to naively assume that when person B speaks directly after person A, they are interacting.s
 
@@ -214,6 +225,9 @@ export const getCharacterInteractions = (scenes) => {
 
   return interactions;
 };
+
+
+
 
 export const getInteractionTotals = (interactions) => {
   const res = {};
@@ -247,6 +261,68 @@ export const getCharColor = (idx) => {
 };
 
 
+
+
+export const runCharacters = (data = {}, width = 500, height = 300) => {
+  const margin = { left: 80, top: 0, bottom: 30, right: 0 };
+  const w = width + margin.left + margin.right;
+  const h = height + margin.top + margin.bottom;
+
+  d3.selectAll(".characters").remove();
+
+  // const data = speakerAmts;
+  const { numLines, speakerAmts } = data;
+  // console.log(data);
+
+  var svg = d3.select(".characters-container")
+    .append("svg")
+    .attr("width", w)
+    .attr("height", h)
+    .attr("class", "characters")
+    .append("g")
+    .attr("transform",
+      "translate(" + margin.left + "," + margin.top + ")");
+
+  const max = Math.max(...speakerAmts.map(s => s.value)) * numLines;
+  // console.log("max", max);
+
+  // Add X axis
+  var x = d3.scaleLinear()
+    .domain([0, max])
+    .range([0, width]);
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+    .selectAll("text")
+    .attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "end");
+
+  // Y axis
+  var y = d3.scaleBand()
+    .range([0, height])
+    .domain(speakerAmts.map(function (d) { return d.speaker; }))
+    .padding(.1);
+  svg.append("g")
+    .call(d3.axisLeft(y))
+
+  //Bars
+  svg.selectAll("myRect")
+    .data(speakerAmts)
+    .enter()
+    .append("rect")
+    .attr("x", x(0))
+    .attr("y", function (d) { return y(d.speaker); })
+    .attr("width", function (d) { return x(d.value * numLines); })
+    .attr("height", y.bandwidth())
+    .attr("fill", function (d) {
+      const idx = speakerAmts.findIndex(s => s.speaker === d.speaker);
+      return getCharColor(idx);
+    });
+};
+
+
+
+
 export const runInteractions = (data, speakerAmts = [], width = 500, height = 300) => {
   const margin = { left: 150, top: 0, bottom: 30, right: 30 };
   const w = width + margin.left + margin.right;
@@ -263,9 +339,12 @@ export const runInteractions = (data, speakerAmts = [], width = 500, height = 30
     .attr("transform",
       "translate(" + margin.left + "," + margin.top + ")");
 
+
+  const max = Math.max(...data.map(s => s.value));
+
   // Add X axis
   var x = d3.scaleLinear()
-    .domain([0, 150]) // TODO: Magic
+    .domain([0, max])
     .range([0, width]);
   svg.append("g")
     .attr("transform", "translate(0," + height + ")")
@@ -317,6 +396,10 @@ export const runInteractions = (data, speakerAmts = [], width = 500, height = 30
       return fills[1];
     })
 };
+
+
+
+
 
 export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 300, overlap = 0.6, speakerAmts = []) => {
   const margin = { left: 100, top: 30, bottom: 30, right: 200 };
