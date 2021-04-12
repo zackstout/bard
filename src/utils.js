@@ -157,86 +157,86 @@ function slug(name) {
   return name.replace(/\s/g, "_");
 }
 
-//   function getSpeeches(scene) {
-//     const speeches = [];
+export const getSpeeches = (scene) => {
+  const speeches = [];
 
-//     let speech = {
-//       speaker: "",
-//       lines: [],
-//     };
-//     // console.log(scene);
+  let speech = {
+    speaker: "",
+    lines: [],
+  };
+  // console.log(scene);
 
-//     scene.lines.forEach((line, idx) => {
-//       if (idx === scene.lines.length - 1) {
-//         // last line: push speech
-//         speech.lines.push(line.value);
-//         speeches.push(speech);
-//         return;
-//       }
-//       if (line.type === "speech") {
-//         // skip first speaker line:
-//         if (speech.lines.length > 0) {
-//           speeches.push(speech);
-//           speech = {};
-//           speech.lines = [];
-//         }
-//         speech.speaker = line.value;
-//       } else {
-//         speech.lines.push(line.value);
-//       }
-//     });
+  scene.lines.forEach((line, idx) => {
+    if (idx === scene.lines.length - 1) {
+      // last line: push speech
+      speech.lines.push(line.value);
+      speeches.push(speech);
+      return;
+    }
+    if (line.type === "speech") {
+      // skip first speaker line:
+      if (speech.lines.length > 0) {
+        speeches.push(speech);
+        speech = {};
+        speech.lines = [];
+      }
+      speech.speaker = line.value;
+    } else {
+      speech.lines.push(line.value);
+    }
+  });
 
-//     return speeches;
-//   }
+  return speeches;
+};
 
 //   /*
 //   Idea here is to naively assume that when person B speaks directly after person A, they are interacting.s
 
 //   Hmm...we could alternatively try to weight interactions by num of lines
 //   */
-//   function getCharacterInteractions(scenes) {
-//     const interactions = {};
+export const getCharacterInteractions = (scenes) => {
+  const interactions = {};
 
-//     scenes.forEach((scene) => {
-//       const speeches = getSpeeches(scene);
-//       let prevSpeaker = speeches[0].speaker;
-//       speeches.slice(1).forEach((speech) => {
-//         if (!interactions.hasOwnProperty(prevSpeaker)) {
-//           interactions[prevSpeaker] = {};
-//         }
-//         if (!interactions[prevSpeaker].hasOwnProperty(speech.speaker)) {
-//           interactions[prevSpeaker][speech.speaker] = 0;
-//         }
-//         interactions[prevSpeaker][speech.speaker]++;
-//         prevSpeaker = speech.speaker;
-//       });
-//     });
+  scenes.forEach((scene) => {
+    const speeches = getSpeeches(scene);
+    let prevSpeaker = speeches[0].speaker;
+    speeches.slice(1).forEach((speech) => {
+      if (!interactions.hasOwnProperty(prevSpeaker)) {
+        interactions[prevSpeaker] = {};
+      }
+      if (!interactions[prevSpeaker].hasOwnProperty(speech.speaker)) {
+        interactions[prevSpeaker][speech.speaker] = 0;
+      }
+      interactions[prevSpeaker][speech.speaker]++;
+      prevSpeaker = speech.speaker;
+    });
+  });
 
-//     return interactions;
-//   }
+  return interactions;
+};
 
-//   function getInteractionTotals(interactions) {
-//     const res = {};
+export const getInteractionTotals = (interactions) => {
+  const res = {};
 
-//     Object.keys(interactions).forEach((speaker) => {
-//       Object.keys(interactions[speaker]).forEach((otherSpeaker) => {
-//         const pairRep = [speaker, otherSpeaker].sort().join("_");
-//         if (!res.hasOwnProperty(pairRep)) {
-//           res[pairRep] = 0;
-//         }
-//         res[pairRep] += interactions[speaker][otherSpeaker];
-//       });
-//     });
+  Object.keys(interactions).forEach((speaker) => {
+    Object.keys(interactions[speaker]).forEach((otherSpeaker) => {
+      const pairRep = [speaker, otherSpeaker].sort().join("_");
+      if (!res.hasOwnProperty(pairRep)) {
+        res[pairRep] = 0;
+      }
+      res[pairRep] += interactions[speaker][otherSpeaker];
+    });
+  });
 
-//     // res is an object like {"Banquo_Macbeth": 42, ...}
+  // res is an object like {"Banquo_Macbeth": 42, ...}
 
-//     return Object.keys(res)
-//       .map((pair) => {
-//         return { pair, value: res[pair] };
-//       })
-//       .sort((a, b) => b.value - a.value);
-//     // return res;
-//   }
+  return Object.keys(res)
+    .map((pair) => {
+      return { pair, value: res[pair] };
+    })
+    .sort((a, b) => b.value - a.value);
+  // return res;
+};
 
 
 
@@ -246,11 +246,82 @@ export const getCharColor = (idx) => {
   return "gray";
 };
 
-export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 300, overlap = 0.6, speakerAmts = []) => {
 
-  const margin = { left: 75, top: 30, bottom: -30, right: 0 };
-  const w = width - margin.left;
-  const h = height - margin.top - margin.bottom;
+export const runInteractions = (data, speakerAmts = [], width = 500, height = 300) => {
+  const margin = { left: 150, top: 0, bottom: 30, right: 30 };
+  const w = width + margin.left + margin.right;
+  const h = height + margin.top + margin.bottom;
+
+  d3.selectAll(".interactions").remove();
+
+  var svg = d3.select(".interactions-container")
+    .append("svg")
+    .attr("width", w)
+    .attr("height", h)
+    .attr("class", "interactions")
+    .append("g")
+    .attr("transform",
+      "translate(" + margin.left + "," + margin.top + ")");
+
+  // Add X axis
+  var x = d3.scaleLinear()
+    .domain([0, 150]) // TODO: Magic
+    .range([0, width]);
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+    .selectAll("text")
+    .attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "end");
+
+  // Y axis
+  var y = d3.scaleBand()
+    .range([0, height])
+    .domain(data.map(function (d) { return d.pair; }))
+    .padding(.1);
+  svg.append("g")
+    .call(d3.axisLeft(y))
+
+  //Bars
+  svg.selectAll("myRect")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("x", x(0))
+    .attr("y", function (d) { return y(d.pair); })
+    .attr("width", function (d) { return x(d.value) / 2; })
+    .attr("height", y.bandwidth())
+    .attr("fill", function (d) {
+      // console.log('get fill', d);
+      const names = d.pair.split("_");
+      const idxs = names.map(name => speakerAmts.findIndex(s => s.speaker === name));
+      const fills = idxs.map(i => getCharColor(i));
+      // const fill = getCharColor()
+      return fills[0];
+      // return "green";
+      // return `linear-gradient(to right, blue, red)`;
+    })
+
+  svg.selectAll("myRect")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("x", function (d) { return x(d.value) / 2; })
+    .attr("y", function (d) { return y(d.pair); })
+    .attr("width", function (d) { return x(d.value) / 2; })
+    .attr("height", y.bandwidth())
+    .attr("fill", function (d) {
+      const names = d.pair.split("_");
+      const idxs = names.map(name => speakerAmts.findIndex(s => s.speaker === name));
+      const fills = idxs.map(i => getCharColor(i));
+      return fills[1];
+    })
+};
+
+export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 300, overlap = 0.6, speakerAmts = []) => {
+  const margin = { left: 100, top: 30, bottom: 30, right: 200 };
+  const w = width + margin.left + margin.right;
+  const h = height + margin.top + margin.bottom;
 
   // TODO: This affects the top one weirdly...add margin top? Yeah...need more for fewer speakers
   // Basicaclly areaChartHeightshould control marginTOp
@@ -259,7 +330,7 @@ export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 30
   var x = function (d) {
     return d.chunkIdx;
   },
-    xScale = d3.scaleLinear().range([0, w]),
+    xScale = d3.scaleLinear().range([0, width]),
     xValue = function (d) {
       return xScale(x(d));
     },

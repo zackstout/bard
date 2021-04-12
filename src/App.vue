@@ -10,6 +10,8 @@ import { Component, Vue } from "vue-property-decorator";
 /*
 NOTES: If play or character or whatever is not in list, need to show "404" page
 
+[x] TODO: Fill interactions chart with real colors
+
 [x] TODO: Get curves back
 
 figure outhow to share data (char colors)...
@@ -19,7 +21,11 @@ Maybe browser cache is smart enough to handle it?
 
 Clean up data stuff
 
-TODO: Add character colors! (maybe text shadow to lines??)
+[x] TODO: Add character colors! (maybe text shadow to lines??)
+
+TODO: How to get hover on interactions chart to communicate to Ridges chart??
+
+Fix width of clickable items
 
 TODO: Add character view
 
@@ -27,7 +33,7 @@ TODO: Add "piecharts"
 
 TODO: Search!!
 
-TODO: Filter by speech length....within a play? Across all plays?
+[x] TODO: Filter by speech length....within a play? Across all plays?
 
 TODO: show interactions....relationships....punctuation habits....speech percentages....
 */
@@ -42,6 +48,7 @@ export default class App extends Vue {}
   user-select: none;
   color: #2c3e50;
   padding: 1rem;
+  overflow: hidden;
 }
 
 .click {
