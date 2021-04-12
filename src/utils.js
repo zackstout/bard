@@ -6,6 +6,23 @@ export const plays = [
   { value: "macbeth", label: "Macbeth" },
   { value: "merchant", label: "Merchant of Venice" },
   { value: "asyoulikeit", label: "As You Like It" },
+  { value: "1henryiv", label: "Henvry IV, Part 1" },
+  { value: "cleopatra", label: "Cleopatra" },
+  { value: "coriolanus", label: "Coriolanus" },
+  { value: "hamlet", label: "Hamlet" },
+  { value: "julius_caesar", label: "Julius Caesar" },
+  { value: "lear", label: "King Lear" },
+  { value: "measure", label: "Measure for Measure" },
+  { value: "midsummer", label: "Midummer Night's Dream" },
+  { value: "much_ado", label: "Much Ado About Nothing" },
+  { value: "othello", label: "Othello" },
+  { value: "richardii", label: "Richard II" },
+  { value: "richardiii", label: "Richard III" },
+  { value: "romeo_juliet", label: "Romeo & Juliet" },
+  { value: "tempest", label: "The Tempest" },
+  { value: "titus", label: "Titus Andronicus" },
+  { value: "troilus_cressida", label: "Troilus & Cressida" },
+  { value: "twelfth_night", label: "Twelfth Night" },
 ];
 
 export const emojiRelationships = {

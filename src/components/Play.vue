@@ -4,7 +4,7 @@
       <div style="padding:1rem;">
         <div
           :style="{ 'font-weight': play === p.value ? 'bold' : '' }"
-          style="margin:8px 0; cursor:pointer;"
+          class="side-play"
           v-for="p in plays"
           :key="p.value"
           @click="goPlay(p.value)"
@@ -18,19 +18,6 @@
       <h2>{{ playLabel }}</h2>
 
       <div class="ridges-container"></div>
-
-      <!-- <div>
-      <h3>Characters</h3>
-      <div
-        class="click"
-        v-for="(char, i) in characters"
-        :key="char"
-        @click="goCharacter(char)"
-        :style="getCharStyle(i)"
-      >
-        {{ char }}
-      </div>
-    </div> -->
 
       <div class="charts-container">
         <div class="chart-container">
@@ -121,9 +108,7 @@ export default class Play extends Vue {
         runRidgelines(this.playData, 10, window.innerWidth - 300, 500, 0.6, bd.speakerAmts);
 
         const charInteractions = getCharacterInteractions(r.data);
-        // console.log("ints", charInteractions);
         const totals = getInteractionTotals(charInteractions);
-        // console.log("totals", totals);
 
         const chartWidth = (window.innerWidth - 400) / 2;
         const chartHeight = 300;
@@ -223,5 +208,14 @@ export default class Play extends Vue {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.side-play {
+  margin: 8px 0;
+  cursor: pointer;
+}
+
+.side-play:hover {
+  opacity: 0.5;
 }
 </style>
