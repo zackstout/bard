@@ -1,10 +1,5 @@
 <template>
   <div>
-    <!-- <div>Welcome home!</div>
-
-    <div @click="$router.push('/Play1')">Play1</div>
-    <div @click="$router.push('/Play2')">Play2</div> -->
-
     <h2>Explore the Bard</h2>
 
     <div>
@@ -23,7 +18,6 @@ import { plays } from "@/utils";
 @Component
 export default class Play extends Vue {
   plays = plays;
-  //   @Prop() private msg!: string;
 
   goPlay(play: string) {
     this.$router.push(`/${play}`);
@@ -31,5 +25,4 @@ export default class Play extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped></style>

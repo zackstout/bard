@@ -1,8 +1,5 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" /> -->
-
     <router-view> </router-view>
 
     <!-- <div v-for="(scene, i) in macbeth" :key="i" style="margin-bottom:100px;">
@@ -16,43 +13,96 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-// import HelloWorld from "./components/HelloWorld.vue";
-// @ts-ignore
-// import macbeth from "./output/macbeth.json";
 
 /*
 NOTES: If play or character or whatever is not in list, need to show "404" page
 
 */
 
-@Component({
-  components: {
-    // HelloWorld,
-  },
-})
-export default class App extends Vue {
-  // mounted() {
-  //   console.log("mac", macbeth);
-  // }
-
-  // get macbeth() {
-  //   return macbeth;
-  // }
-
-  getStyle(line: any) {
-    if (line.type === "speech") {
-      return { fontWeight: "bold", marginTop: "25px" };
-    }
-  }
-}
+@Component({})
+export default class App extends Vue {}
 </script>
 
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
 
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  padding: 1rem;
+}
+
+.click {
+  cursor: pointer;
+}
+.click:hover {
+  color: aqua;
+}
+
+svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.axis .domain {
+  display: none;
+}
+
+.axis--x text {
+  fill: #999;
+}
+
+.axis text {
+  fill: black !important;
+}
+
+.axis--x line {
+  stroke: #aaa;
+}
+
+.axis--activity .tick line {
+  display: none;
+}
+
+.axis--activity text {
+  font-size: 10px;
+  fill: #777;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  cursor: pointer;
+}
+
+.axis--activity .tick:nth-child(odd) text {
+  fill: #222;
+}
+
+.line {
+  fill: none;
+  stroke: #fff;
+}
+
+.area {
+  fill: #448cab;
+}
+
+.activity:nth-child(odd) .area {
+  fill: #5ca3c1;
+}
+
+.activity:nth-child(odd) .area.active {
+  fill: gold;
+}
+
+.area.active {
+  fill: gold;
+}
+
+.space-y {
+  margin-bottom: 10px;
+}
+
+.bold {
+  font-weight: bold;
+  margin: 5px 0;
+
+  font-size: 1.8rem;
 }
 </style>

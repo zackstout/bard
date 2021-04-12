@@ -2,27 +2,25 @@
   <div>
     <h2>{{ playLabel }}</h2>
 
+    <div class="ridges-container"></div>
+
     <div>
       <h3>Characters</h3>
-      <div v-for="char in characters" :key="char" @click="goCharacter(char)">{{ char }}</div>
+      <div class="click" v-for="char in characters" :key="char" @click="goCharacter(char)">{{ char }}</div>
     </div>
 
     <div>
       <h3>Scenes</h3>
-      <div v-for="scene in scenes" :key="scene" @click="goScene(scene)">{{ scene }}</div>
+      <div class="click" v-for="scene in scenes" :key="scene" @click="goScene(scene)">{{ scene }}</div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { plays, getPlayBreakdown } from "@/utils";
+import { plays, getPlayBreakdown, runRidgelines } from "@/utils";
 
 import axios from "axios";
-
-// import macbeth from "@/assets/macbeth.json";
-// import { allPlays } from "@/components/allPlays";
-
 import * as d3 from "d3";
 
 @Component
@@ -31,28 +29,14 @@ export default class Play extends Vue {
 
   playData: any = [];
 
-  // @Watch("$route")
-  // routeChange() {
-  //   console.log("route change");
-  //   this.loadData();
-  // }
-
   loadData() {
     axios
       .get(`./plays/${this.play}.json`)
       .then((r) => {
         this.playData = r.data;
-
-        // const bd = getPlayBreakdown(r.data);
-        // console.log("bd", bd, r.data);
+        runRidgelines(this.playData, 10, window.innerWidth, 600);
       })
       .catch((e) => console.error("e", e));
-
-    // d3.json(`./plays/${this.play}.json`, (err: any, data: any[]) => {
-    //   if (err) throw Error;
-    //   console.log("data....", data);
-    //   this.playData = data;
-    // });
   }
 
   get playLabel() {
@@ -69,17 +53,9 @@ export default class Play extends Vue {
     return this.playData.map((scene: any) => scene.title);
   }
 
-  // get playData(): any[] {
-  //   return allPlays[this.play];
-  // }
-
   mounted() {
     this.loadData();
-    // console.log("the play...", allPlays[this.play]);
-    // console.log(`@/components/output/${this.play}.json`);
-    // d3.json(`@/assets/${this.play}.json`, function(error: any, dataFlat: any) {
-    //   if (error) throw error;
-    //   console.log("got it", dataFlat);
+
     //   // const speeches = getSpeeches(dataFlat[1]);
     //   // console.log("speeches", speeches);
     //   //   const charInteractions = getCharacterInteractions(dataFlat);
@@ -92,10 +68,7 @@ export default class Play extends Vue {
     //   //   console.log("play bd", playBreakdown);
     //   //   // const spkrs = getLinesBySpeakerByScene(dataFlat);
     //   //   const spkrs3 = getLinesBySpeakerByChunk(dataFlat, chunkSize);
-    // });
   }
-
-  //   msg = "hello" + this.$route.params.play;
 
   goCharacter(name: string) {
     this.$router.push(`/${this.play}/characters/${name}`);
@@ -106,6 +79,3 @@ export default class Play extends Vue {
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped></style>
