@@ -124,11 +124,13 @@ export const getPlayBreakdown = (scenes) => {
 
 
 
-export const getLinesBySpeakerByChunk = (scenes, chunkSize = 10) => {
+export const getLinesBySpeakerByChunk = (scenes, chunkSize = 10, targetSpeaker = "") => {
   const res = [];
   const speakers = getSpeakers(scenes);
 
-  speakers.forEach((speaker) => {
+  const speakersUse = targetSpeaker ? speakers.filter(s => s === targetSpeaker) : speakers;
+
+  speakersUse.forEach((speaker) => {
     let chunkIdx = 0;
     let lineNo = 0;
     let numLines = 0;
@@ -726,8 +728,9 @@ export const runInteractions = (data, speakerAmts = [], width = 500, height = 30
 
 
 
-export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 300, overlap = 0.6, speakerAmts = []) => {
-  const margin = { left: 100, top: 30, bottom: 30, right: 200 };
+export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 300, overlap = 0.6, speakerAmts = [], targetSpeaker = "", margin = { left: 100, top: 30, bottom: 30, right: 200 }) => {
+  // let defaultMargin = { left: 100, top: 30, bottom: 30, right: 200 };
+
   const w = width + margin.left + margin.right;
   const h = height + margin.top + margin.bottom;
 
@@ -781,7 +784,7 @@ export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 30
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   const dataFlat = playData;
-  const spkrs3 = getLinesBySpeakerByChunk(dataFlat, chunkSize);
+  const spkrs3 = getLinesBySpeakerByChunk(dataFlat, chunkSize, targetSpeaker);
   // console.log("got it", spkrs3);
 
   var data = d3

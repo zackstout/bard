@@ -12,11 +12,16 @@ NOTES: If play or character or whatever is not in list, need to show "404" page
 
 [ ] use tailwind!
 
-[ ] make "speeches" component (Play and Character....and Scene)
 
 [ ] TODO: Add character view
 
-[ ] add sidebar to Scene (and char) view
+
+[ ] Clean up all hover/click
+
+[ ] Add all click/routing behavior
+
+
+[ ] make "speeches" component (Play and Character....and Scene)
 
 [ ] relationships! (Must be added manually....)
 
@@ -35,10 +40,6 @@ NOTES: If play or character or whatever is not in list, need to show "404" page
 (bc want to have highlight behavior on one affect others)
 
 [ ] Clean up chart margin weirdness (number of things...Height of first one overflowing top....stuff going off to right...)
-
-[ ] Clean up all hover/click
-
-[ ] Add all click/routing behavior
 
 
 [ ] Find 20 visibly distinct colors
@@ -73,6 +74,8 @@ Maybe browser cache is smart enough to handle it?
 
 [x] Represent in scene: numlines, percent of play
 Ooooh maybe like a clock that shows a sliver, and where in play it is. I like that.
+
+[x] add sidebar to Scene (and char) view
 
 */
 

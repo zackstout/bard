@@ -18,6 +18,8 @@
       <h2>{{ character }}</h2>
       <h3 style="font-style:italic; margin-bottom:30px; cursor:pointer;" @click="goPlay(play)">{{ playLabel }}</h3>
 
+      <div class="ridges-container" style="margin-bottom:30px;"></div>
+
       <div class="interactions-container"></div>
 
       <!-- copy from Play.vue: -->
@@ -40,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import axios from "axios";
 import {
   getPlayBreakdown,
@@ -65,6 +67,11 @@ export default class Character extends Vue {
     this.loadData();
   }
 
+  @Watch("$route")
+  routeChanged() {
+    this.loadData();
+  }
+
   loadData() {
     axios
       .get(`../../plays/${this.play}.json`)
@@ -76,9 +83,17 @@ export default class Character extends Vue {
 
         // TODO: filter by character
         const totals = getInteractionTotals(charInteractions);
+        // console.log("totals", totals);
+
+        runRidgelines(this.playData, 10, window.innerWidth - 400, 25, 0.6, bd.speakerAmts, this.character, {
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+        });
 
         runInteractions(
-          totals.slice(0, 10),
+          totals.filter((t) => t.pair.includes(this.character)),
           bd.speakerAmts
           // .filter((s) => s.speaker === this.character)
         );
