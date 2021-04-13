@@ -1,26 +1,48 @@
 <template>
   <div>
-    <h2 class="click" @click="goPlay(play)">{{ playLabel }}</h2>
+    <div id="sidebar">
+      <div style="padding:1rem;">
+        <div style="font-weight:bold;">CHARACTERS</div>
+        <div class="side-char" v-for="c in allCharacters" :key="c" @click="goCharacter(c)">
+          {{ c }}
+        </div>
 
-    <div class="scenepie-container"></div>
-
-    <h3>
-      <span v-if="sceneIdx !== 0" class="click" @click="goScene(prevScene)">←</span>
-      <span style="margin:0 1rem;">Act {{ actNum }}, Scene {{ sceneNum }}</span>
-      <span v-if="sceneIdx !== allScenes.length - 1" class="click" @click="goScene(nextScene)">→</span>
-    </h3>
-
-    <div class="ridges-container"></div>
-
-    <div>
-      <div class="click" v-for="char in characters" :key="char" :style="getCharStyle(char)" @click="goCharacter(char)">
-        {{ char }}
+        <div style="font-weight:bold; margin-top:20px;">SCENES</div>
+        <div class="side-scene" v-for="s in allScenes" :key="s" @click="goScene(s)">
+          {{ s }}
+        </div>
       </div>
     </div>
 
-    <div>
-      <div v-for="(line, j) in sceneData.lines" :key="j" :style="getLineStyle(line)">
-        {{ line.value }}
+    <div id="main">
+      <h2 class="click" @click="goPlay(play)">{{ playLabel }}</h2>
+
+      <div class="scenepie-container"></div>
+
+      <h3>
+        <span v-if="sceneIdx !== 0" class="click" @click="goScene(prevScene)">←</span>
+        <span style="margin:0 1rem;">Act {{ actNum }}, Scene {{ sceneNum }}</span>
+        <span v-if="sceneIdx !== allScenes.length - 1" class="click" @click="goScene(nextScene)">→</span>
+      </h3>
+
+      <div class="ridges-container"></div>
+
+      <div>
+        <div
+          class="click"
+          v-for="char in characters"
+          :key="char"
+          :style="getCharStyle(char)"
+          @click="goCharacter(char)"
+        >
+          {{ char }}
+        </div>
+      </div>
+
+      <div>
+        <div v-for="(line, j) in sceneData.lines" :key="j" :style="getLineStyle(line)">
+          {{ line.value }}
+        </div>
       </div>
     </div>
   </div>
@@ -115,6 +137,10 @@ export default class Scene extends Vue {
     return bd.speakerAmts.map((s) => s.speaker);
   }
 
+  get allCharacters() {
+    return this.allSpeakers.map((s) => s.speaker);
+  }
+
   get play() {
     return this.$route.params.play;
   }
@@ -138,7 +164,36 @@ export default class Scene extends Vue {
 </script>
 
 <style scoped>
-.scenepie-container svg {
-  float: left;
+/* Just copying from Play */
+#sidebar {
+  width: 250px;
+  height: 100%;
+  background: rgb(235, 235, 235);
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: scroll;
+}
+
+#main {
+  width: calc(100% - 250px - 2rem);
+  position: absolute;
+  top: 0;
+  left: 250px;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.side-char,
+.side-scene {
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.side-char:hover {
+  opacity: 0.5;
+}
+.side-scene:hover {
+  opacity: 0.5;
 }
 </style>

@@ -273,6 +273,7 @@ export default class Play extends Vue {
 .side-play {
   margin: 8px 0;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .side-play:hover {

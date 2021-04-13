@@ -12,8 +12,7 @@ NOTES: If play or character or whatever is not in list, need to show "404" page
 
 [ ] use tailwind!
 
-[ ] Represent in scene: numlines, percent of play
-Ooooh maybe like a clock that shows a sliver, and where in play it is. I like that.
+[ ] make "speeches" component (Play and Character....and Scene)
 
 [ ] TODO: Add character view
 
@@ -71,6 +70,10 @@ figure outhow to share data (char colors)...
 Feels like need to pass in to runRidgelines, at the least. Butneed to do more...
 Scene needs to recompute or know about playBreakdown, to get speakerAmts...
 Maybe browser cache is smart enough to handle it?
+
+[x] Represent in scene: numlines, percent of play
+Ooooh maybe like a clock that shows a sliver, and where in play it is. I like that.
+
 */
 
 @Component({})
