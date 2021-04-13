@@ -15,7 +15,7 @@
     </div>
 
     <div id="main">
-      <h2>{{ playLabel }}</h2>
+      <h2 style="text-align:center;">{{ playLabel }}</h2>
 
       <div class="ridges-container"></div>
 
@@ -42,17 +42,30 @@
         <h3>Scenes</h3>
 
         <div class="pie-container"></div>
-        <!-- <div class="click" v-for="scene in scenes" :key="scene" @click="goScene(scene)">{{ scene }}</div> -->
       </div>
 
       <div class="line"></div>
 
+      <!-- 
+      <div class="chart-container">
+        <h3>Speeches by Length</h3>
+        <div class="linegroups-container"></div>
+      </div>
+      <div class="line"></div> -->
+
       <div>
-        <h3>Speeches</h3>
-        <span style="margin-right:3px;">Minimum length:</span>
-        <select v-model="minLengthSelectOption">
-          <option v-for="opt in minLengthSelectOptions" :key="opt" :value="opt">{{ opt }}</option>
-        </select>
+        <div class="chart-container">
+          <h3>Speeches</h3>
+
+          <div style="display:flex;">
+            <span style="margin-right:3px;">Minimum length:</span>
+            <select v-model="minLengthSelectOption">
+              <option v-for="opt in minLengthSelectOptions" :key="opt" :value="opt">{{ opt }}</option>
+            </select>
+          </div>
+
+          <div style="font-style:italic; margin-top:10px;">Results: {{ speeches.length }}</div>
+        </div>
 
         <div>
           <div v-for="(speech, i) in speeches" :key="i" style="margin-top:20px;">
@@ -62,7 +75,9 @@
             </div>
 
             <div>
-              <div v-for="(line, i) in speech.data.lines" :key="i">{{ line }}</div>
+              <div v-for="(line, i) in speech.data.lines" :key="i" :style="getLineStyle(speech.data.speaker)">
+                {{ line }}
+              </div>
             </div>
           </div>
         </div>
@@ -73,6 +88,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { EVENTS, EventBus } from "@/EventBus";
 import {
   plays,
   getPlayBreakdown,
@@ -85,6 +101,8 @@ import {
   runCharacters,
   getTotalMarks,
   runPiecharts,
+  runLinegroups,
+  groupLinesByNumber,
 } from "@/utils";
 
 import axios from "axios";
@@ -99,8 +117,18 @@ export default class Play extends Vue {
 
   playData: any = [];
 
+  allSpeakers: any = [];
+
   mounted() {
     this.loadData();
+
+    EventBus.$on(EVENTS.CLICK_SCENE, (scene: string) => {
+      this.goScene(scene);
+    });
+
+    EventBus.$on(EVENTS.CLICK_SPEAKER, (speaker: string) => {
+      this.goCharacter(speaker);
+    });
   }
 
   @Watch("$route")
@@ -114,6 +142,8 @@ export default class Play extends Vue {
       .then((r) => {
         this.playData = r.data;
         const bd = getPlayBreakdown(this.playData);
+
+        this.allSpeakers = bd.speakerAmts;
 
         // TODO: Don't like this magic number (related to marginLeft of ridgelines)
         runRidgelines(this.playData, 10, window.innerWidth - 300, 500, 0.6, bd.speakerAmts);
@@ -129,6 +159,8 @@ export default class Play extends Vue {
         runCharacters(bd, chartWidth - 25, chartHeight);
 
         runPiecharts(this.playData, bd.speakerAmts, window.innerWidth - 200, 400);
+
+        // runLinegroups(groupLinesByNumber(this.playData), window.innerWidth - 250, 400);
 
         // const qmarks = getTotalMarks(this.playData, "?");
         // console.log("qmarks", qmarks, (100 * qmarks.total) / qmarks.allChars);
@@ -179,6 +211,15 @@ export default class Play extends Vue {
     const col = getCharColor(charIdx);
     return {
       color: col,
+    };
+  }
+
+  getLineStyle(speaker: string) {
+    const charIdx = this.allSpeakers.findIndex((s: any) => s.speaker === speaker);
+    const col = getCharColor(charIdx);
+
+    return {
+      textShadow: `1px 1px 5px ${col}`,
     };
   }
 

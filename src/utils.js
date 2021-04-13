@@ -1,5 +1,6 @@
-// import * as d3 from "d3";
+
 import d3 from "@/assets/d3";
+import { EVENTS, EventBus } from "@/EventBus";
 
 
 export const plays = [
@@ -23,7 +24,8 @@ export const plays = [
   { value: "titus", label: "Titus Andronicus" },
   { value: "troilus_cressida", label: "Troilus & Cressida" },
   { value: "twelfth_night", label: "Twelfth Night" },
-].sort((a, b) => a.value > b.value);
+]
+  .sort((a, b) => a.label > b.label ? 1 : -1);
 
 console.log("plays", plays);
 
@@ -292,9 +294,44 @@ export const getTotalMarks = (scenes, target) => {
 };
 
 
+
+export const groupLinesByNumber = (scenes) => {
+  // should be of form {1:10,2:20,3:12,4:0,....}
+  let res = {};
+  let maxLen = 0;
+
+  scenes.forEach(scene => {
+    const speeches = getSpeeches(scene);
+    speeches.forEach(speech => {
+      const len = speech.lines.length;
+      if (len > maxLen) maxLen = len;
+      if (!res.hasOwnProperty(len)) {
+        res[len] = 0;
+      }
+      res[len]++
+    })
+  });
+
+  const arr = [];
+  for (let i = 0; i < maxLen; i++)arr.push(i);
+
+  return arr.map(i => {
+    return {
+      lineLength: i,
+      value: res[i] ? res[i] : 0
+    }
+  });
+};
+
+
+
+
+
 // =================================================================================
 // CHARTS
 // =================================================================================
+
+
 export const runPiecharts = (playData, speakerAmts = [], width = 500, height = 350) => {
   const margin = { left: 80, top: 0, bottom: 0, right: 0 };
   const w = width + margin.left + margin.right;
@@ -310,9 +347,7 @@ export const runPiecharts = (playData, speakerAmts = [], width = 500, height = 3
     .attr("class", "pie")
     .append("g");
 
-  console.log('running piecharts', svg)
-
-  // =======
+  // console.log('running piecharts', svg)
 
   const scenesPerAct = {};
   playData.forEach(scene => {
@@ -324,7 +359,7 @@ export const runPiecharts = (playData, speakerAmts = [], width = 500, height = 3
   });
 
   const maxScenesPerAct = Math.max(...Object.keys(scenesPerAct).map(key => scenesPerAct[key]));
-  console.log("max..", maxScenesPerAct);
+  // console.log("max..", maxScenesPerAct);
 
   playData.forEach((scene) => {
     const bd = getSceneBreakdown(scene);
@@ -336,7 +371,7 @@ export const runPiecharts = (playData, speakerAmts = [], width = 500, height = 3
         const charName = amt.speaker;
         const charIdx = speakerAmts.findIndex((x) => x.speaker === charName);
         // return getCharColor(charIdx);
-        return { ...amt, ...{ fill: getCharColor(charIdx) } };
+        return { ...amt, ...{ fill: getCharColor(charIdx), title: scene.title } };
       }),
     };
 
@@ -378,14 +413,23 @@ export const runPiecharts = (playData, speakerAmts = [], width = 500, height = 3
       .attr("height", function (d) {
         return d.y1 - d.y0;
       })
+      .attr("cursor", "pointer")
       .style("stroke", "black")
+      .attr("data-title", function (d) {
+        // console.log("d", d);
+        return d.data.title;
+      })
       .style("fill", function (d) {
         // console.log("f", d.data.fill);
         return d.data.fill;
         // return "blue";
       })
       .attr("transform", function (d) {
-        return `translate(${margin.left + sceneNum * (width * WIDTH_SCL + PADDING)}, ${actNum * (height * HEIGHT_SCL + PADDING)})`;
+        return `translate(${margin.left + sceneNum * (width * WIDTH_SCL + PADDING)}, ${PADDING + actNum * (height * HEIGHT_SCL + PADDING)})`;
+      })
+      .on("click", (ev) => {
+        // console.log("click", ev.target.dataset.title)
+        EventBus.$emit(EVENTS.CLICK_SCENE, ev.target.dataset.title);
       })
   });
 
@@ -400,6 +444,67 @@ export const runPiecharts = (playData, speakerAmts = [], width = 500, height = 3
     .selectAll("text")
     .attr("fill", "black")
 };
+
+
+
+
+// data looks like [{lineLength:1,value:10},...]
+export const runLinegroups = (data = [], width = 500, height = 300) => {
+  const margin = { left: 80, top: 0, bottom: 30, right: 0 };
+  const w = width + margin.left + margin.right;
+  const h = height + margin.top + margin.bottom;
+
+  d3.selectAll(".linegroups").remove();
+
+  console.log("data..linegroup", data);
+
+  var svg = d3.select(".linegroups-container")
+    .append("svg")
+    .attr("width", w)
+    .attr("height", h)
+    .attr("class", "linegroups")
+    .append("g")
+    .attr("transform",
+      "translate(" + margin.left + "," + margin.top + ")");
+
+  const max = Math.max(...data.map(d => d.value));
+  console.log("max linegroup", max);
+
+  // Add X axis
+  var x = d3.scaleLinear()
+    .domain([0, max])
+    .range([0, width]);
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+    .selectAll("text")
+    .attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "end");
+
+  // Y axis
+  var y = d3.scaleBand()
+    .range([0, height])
+    .domain(data.map(d => d.lineLength))
+    .padding(.1);
+  svg.append("g")
+    .call(d3.axisLeft(y))
+
+  //Bars
+  svg.selectAll("myRect")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("x", x(0))
+    .attr("y", function (d) { return y(d.lineLength); })
+    .attr("width", function (d) { return x(d.value); })
+    .attr("height", y.bandwidth())
+    .attr("fill", function (d) {
+      // const idx = speakerAmts.findIndex(s => s.speaker === d.speaker);
+      // return getCharColor(idx);
+      return "steelblue"
+    });
+};
+
 
 
 
@@ -641,7 +746,8 @@ export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 30
     })
     .on("click", function (d) {
       // runSpeaker(d);
-      console.log("speaker click", d.target.innerHTML);
+      // console.log("speaker click", d.target.innerHTML);
+      EventBus.$emit(EVENTS.CLICK_SPEAKER, d.target.innerHTML);
     });
 
   var gSpeaker = svg

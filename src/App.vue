@@ -10,34 +10,65 @@ import { Component, Vue } from "vue-property-decorator";
 /*
 NOTES: If play or character or whatever is not in list, need to show "404" page
 
-[x] TODO: Fill interactions chart with real colors
+[ ] Represent in scene: numlines, percent of play
+Ooooh maybe like a clock that shows a sliver, and where in play it is. I like that.
 
-[x] TODO: Get curves back
+[ ] TODO: Add character view
+
+[ ] add sidebar to Scene (and char) view
+
+[ ] relationships! (Must be added manually....)
+
+[ ] turn off text shadow...in general, style combos dropdown
+
+[ ] TODO: Search!! ACROSS ALL PLAYS, from home
+
+[ ] Navigation duplicated issue
+(looks like emmpty catch after router.push should silence the error)
+
+[ ] filter by speaker/all in play/Speeches
+
+[ ] line numbers?
+
+[ ] Checkboxes to show/hide graphs 
+(bc want to have highlight behavior on one affect others)
+
+[ ] Clean up chart margin weirdness (number of things...Height of first one overflowing top....stuff going off to right...)
+
+[ ] Clean up all hover/click
+
+[ ] Add all click/routing behavior
+
+
+[ ] Find 20 visibly distinct colors
 
 [ ] Hmm...brutus_lucius interaction rate looks way too high...
+[ ] "ROSENCRANTZ:"
 
+[ ] Clean up data stuff
+Like...Do we ever want to save data? In the json? Or just chill for now
+
+[ ] Sorting
+
+[ ] Expose other options (curve type e.g.)
+
+
+[x] TODO: Add character colors! (maybe text shadow to lines??)
+[x] TODO: Filter by speech length....within a play? Across all plays?
+[x] TODO: Fill interactions chart with real colors
+[x] TODO: Get curves back
+[x] TODO: Add "piecharts"
+[x] added click scene "pie chart"
+[x] Another vis idea: number of lines per speech in a play....just a bar graph I guess
+Kind of a histogram I guess
+Eh, it's not actually that cool
+[x] why isn't basic alphabetical sorting of plays working?
+[x] TODO: How to get hover on interactions chart to communicate to Ridges chart??
+=> Need EVENTBUS!
 figure outhow to share data (char colors)...
 Feels like need to pass in to runRidgelines, at the least. Butneed to do more...
 Scene needs to recompute or know about playBreakdown, to get speakerAmts...
 Maybe browser cache is smart enough to handle it?
-
-Clean up data stuff
-
-[x] TODO: Add character colors! (maybe text shadow to lines??)
-
-TODO: How to get hover on interactions chart to communicate to Ridges chart??
-
-Fix width of clickable items
-
-TODO: Add character view
-
-[x] TODO: Add "piecharts"
-
-TODO: Search!!
-
-[x] TODO: Filter by speech length....within a play? Across all plays?
-
-TODO: show interactions....relationships....punctuation habits....speech percentages....
 */
 
 @Component({})

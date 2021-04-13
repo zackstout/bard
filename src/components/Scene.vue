@@ -75,7 +75,7 @@ export default class Scene extends Vue {
         this.allSpeakers = bd.speakerAmts;
 
         // NOTE: Prob doesn't need to be so large
-        runRidgelines([this.sceneData], 2, window.innerWidth, 400, 0.6, bd.speakerAmts);
+        runRidgelines([this.sceneData], 2, window.innerWidth - 150, 250, 0.6, bd.speakerAmts);
       })
       .catch((e) => console.error("e", e));
   }
