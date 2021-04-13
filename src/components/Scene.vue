@@ -2,13 +2,15 @@
   <div>
     <h2 class="click" @click="goPlay(play)">{{ playLabel }}</h2>
 
-    <div class="ridges-container"></div>
+    <div class="scenepie-container"></div>
 
     <h3>
       <span v-if="sceneIdx !== 0" class="click" @click="goScene(prevScene)">←</span>
       <span style="margin:0 1rem;">Act {{ actNum }}, Scene {{ sceneNum }}</span>
       <span v-if="sceneIdx !== allScenes.length - 1" class="click" @click="goScene(nextScene)">→</span>
     </h3>
+
+    <div class="ridges-container"></div>
 
     <div>
       <div class="click" v-for="char in characters" :key="char" :style="getCharStyle(char)" @click="goCharacter(char)">
@@ -26,7 +28,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { plays, getSceneBreakdown, runRidgelines, getPlayBreakdown, getCharColor } from "@/utils";
+import { plays, getSceneBreakdown, runRidgelines, getPlayBreakdown, getCharColor, runScenePie } from "@/utils";
 import axios from "axios";
 
 @Component
@@ -76,6 +78,8 @@ export default class Scene extends Vue {
 
         // NOTE: Prob doesn't need to be so large
         runRidgelines([this.sceneData], 2, window.innerWidth - 150, 250, 0.6, bd.speakerAmts);
+
+        runScenePie(r.data, this.scene, 50, 50);
       })
       .catch((e) => console.error("e", e));
   }
@@ -132,3 +136,9 @@ export default class Scene extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.scenepie-container svg {
+  float: left;
+}
+</style>

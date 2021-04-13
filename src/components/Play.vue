@@ -143,6 +143,8 @@ export default class Play extends Vue {
         this.playData = r.data;
         const bd = getPlayBreakdown(this.playData);
 
+        // console.log("d...", r.data);
+
         this.allSpeakers = bd.speakerAmts;
 
         // TODO: Don't like this magic number (related to marginLeft of ridgelines)

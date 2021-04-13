@@ -10,6 +10,8 @@ import { Component, Vue } from "vue-property-decorator";
 /*
 NOTES: If play or character or whatever is not in list, need to show "404" page
 
+[ ] use tailwind!
+
 [ ] Represent in scene: numlines, percent of play
 Ooooh maybe like a clock that shows a sliver, and where in play it is. I like that.
 
@@ -93,7 +95,7 @@ export default class App extends Vue {}
 
 svg {
   display: block;
-  margin: 0 auto;
+  /* margin: 0 auto; */
 }
 
 .axis .domain {

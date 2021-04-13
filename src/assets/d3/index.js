@@ -9,7 +9,7 @@ import {
 
 import { hierarchy, treemap } from 'd3-hierarchy';
 
-import { area, curveCardinal } from 'd3-shape';
+import { area, curveCardinal, arc } from 'd3-shape';
 
 // import { nest } from 'd3-collection';
 
@@ -32,5 +32,6 @@ export default {
     extent,
     curveCardinal,
     hierarchy,
-    treemap
+    treemap,
+    arc
 };

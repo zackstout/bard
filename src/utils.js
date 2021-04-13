@@ -324,6 +324,32 @@ export const groupLinesByNumber = (scenes) => {
 };
 
 
+// returns {total, prev, scene}, all numbers of lines
+const getSceneStats = (playData, sceneTitle) => {
+  // console.log('get stats', sceneTitle)
+  let total = 0;
+  let inScene = 0;
+  let prev = 0;
+
+  let seenTarget = false;
+
+  playData.forEach(scene => {
+    const len = scene.lines.length;
+
+    // console.log('seen', scene.title)
+    if (scene.title === sceneTitle) {
+      inScene = len;
+      seenTarget = true;
+    }
+    if (!seenTarget) {
+      prev += len;
+    }
+    total += len;
+  })
+
+  return { total, scene: inScene, prev };
+};
+
 
 
 
@@ -331,6 +357,58 @@ export const groupLinesByNumber = (scenes) => {
 // CHARTS
 // =================================================================================
 
+export const runScenePie = (playData, sceneTitle, width = 200, height = 200) => {
+  // Switching ideas here...this time, we'll shape the data here instead of passing it it
+
+  const { total, prev, scene } = getSceneStats(playData, sceneTitle);
+
+  // console.log(total, prev, scene);
+
+  // Need to know start and end angles....
+  // sum of all lines that have come already,
+  // and then num of lines in scene,
+  // and total in play
+
+  const startAngle = (360 * prev / total) * Math.PI / 180;
+  const endAngle = startAngle + (360 * scene / total) * Math.PI / 180;
+
+  // console.log(startAngle, endAngle);
+
+  d3.selectAll(".scenepie").remove();
+
+  var svg = d3
+    .select(".scenepie-container")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("class", "scenepie")
+    .append("g");
+
+  var generator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(width / 2)
+    .startAngle(startAngle)
+    .endAngle(endAngle);
+
+  svg.append('circle')
+    .attr('r', width / 2)
+    .attr('cx', width / 2)
+    .attr('cy', width / 2)
+    .attr('fill', 'gray')
+  // .attr('stroke', 'black')
+
+  svg.append('path')
+    .attr("d", generator)
+    .attr("fill", "cyan")
+    // .attr("stroke", "black")
+    .attr("transform", `translate(${width / 2},${width / 2})`)
+  // .attrs({
+  //   d: generator,
+  //   transform: 'translate(65, 65)',
+  //   fill: 'cyan',
+  //   stroke: 'black'
+  // });
+};
 
 export const runPiecharts = (playData, speakerAmts = [], width = 500, height = 350) => {
   const margin = { left: 80, top: 0, bottom: 0, right: 0 };
