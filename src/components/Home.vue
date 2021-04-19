@@ -3,7 +3,7 @@
     <h2>Explore the Bard</h2>
 
     <div>
-      <div v-for="play in plays" :key="play.value" @click="goPlay(play.value)">
+      <div v-for="play in plays" :key="play.value" @click="goPlay(play.value)" class="play">
         {{ play.label }}
       </div>
     </div>
@@ -25,4 +25,11 @@ export default class Play extends Vue {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.play {
+  cursor: pointer;
+}
+.play:hover {
+  opacity: 0.5;
+}
+</style>

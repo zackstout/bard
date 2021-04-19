@@ -10,6 +10,8 @@ import { Component, Vue } from "vue-property-decorator";
 /*
 NOTES: If play or character or whatever is not in list, need to show "404" page
 
+[ ] scene arrows should cycle back/forward. the plays end where they begin.
+
 [ ] use tailwind!
 
 

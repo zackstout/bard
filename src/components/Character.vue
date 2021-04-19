@@ -18,7 +18,7 @@
       <h2>{{ character }}</h2>
       <h3 style="font-style:italic; margin-bottom:30px; cursor:pointer;" @click="goPlay(play)">{{ playLabel }}</h3>
 
-      <div class="ridges-container" style="margin-bottom:30px;"></div>
+      <div class="ridges-container" style="margin-bottom:20px;"></div>
 
       <div class="interactions-container"></div>
 
@@ -74,18 +74,16 @@ export default class Character extends Vue {
 
   loadData() {
     axios
-      .get(`../../plays/${this.play}.json`)
+      .get(`../../plays/${this.play}.json`) // tricky path difference
       .then((r) => {
         this.playData = r.data;
         const bd = getPlayBreakdown(this.playData);
         this.allSpeakers = bd.speakerAmts;
         const charInteractions = getCharacterInteractions(r.data);
 
-        // TODO: filter by character
         const totals = getInteractionTotals(charInteractions);
-        // console.log("totals", totals);
 
-        runRidgelines(this.playData, 10, window.innerWidth - 400, 25, 0.6, bd.speakerAmts, this.character, {
+        runRidgelines(this.playData, 10, window.innerWidth - 400, 35, 0.6, bd.speakerAmts, this.character, {
           left: 0,
           top: 0,
           right: 0,
@@ -95,7 +93,6 @@ export default class Character extends Vue {
         runInteractions(
           totals.filter((t) => t.pair.includes(this.character)),
           bd.speakerAmts
-          // .filter((s) => s.speaker === this.character)
         );
       })
       .catch((e) => console.error("e", e));
