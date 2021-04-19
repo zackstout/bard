@@ -15,6 +15,12 @@
     </div>
 
     <div id="main">
+      <div class="click" style="width:15px;height:15px;" @click="$router.push('/')">
+        <img src="@/assets/home_icon.png" alt="" />
+      </div>
+
+      <hr style="margin-bottom:0;" />
+
       <h2 style="text-align:center;">{{ playLabel }}</h2>
 
       <div class="ridges-container"></div>
@@ -290,4 +296,12 @@ export default class Play extends Vue {
 /* .pie-container .axis .domain {
   display: block;
 } */
+
+img {
+  height: 100%;
+  width: 100%;
+}
+.click:hover {
+  opacity: 0.5;
+}
 </style>

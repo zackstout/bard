@@ -8,22 +8,48 @@
         </div>
 
         <div style="font-weight:bold; margin-top:20px;">SCENES</div>
-        <div class="side-scene" v-for="s in allScenes" :key="s" @click="goScene(s)">
+        <div
+          class="side-scene"
+          v-for="s in allScenes"
+          :key="s"
+          @click="goScene(s)"
+          :style="{ 'font-weight': s === scene ? 'bold' : 'normal' }"
+        >
           {{ s }}
+        </div>
+
+        <hr />
+
+        <div class="created">
+          <div>Created by</div>
+          <div>
+            <a href="https://www.zackstout.com">zackstout</a>
+          </div>
         </div>
       </div>
     </div>
 
     <div id="main">
-      <h2 class="click" @click="goPlay(play)">{{ playLabel }}</h2>
+      <div class="click" style="width:15px;height:15px;" @click="$router.push('/')">
+        <img src="@/assets/home_icon.png" alt="" />
+      </div>
 
-      <div class="scenepie-container"></div>
-
-      <h3>
+      <hr style="margin-bottom:0;" />
+      <!-- <div class="header"> -->
+      <h2>
         <span v-if="sceneIdx !== 0" class="click" @click="goScene(prevScene)">←</span>
         <span style="margin:0 1rem;">Act {{ actNum }}, Scene {{ sceneNum }}</span>
         <span v-if="sceneIdx !== allScenes.length - 1" class="click" @click="goScene(nextScene)">→</span>
-      </h3>
+      </h2>
+      <!-- 
+        <div class="click" style="width:20px;height:20px;" @click="$router.push('/')">
+          <img src="@/assets/home_icon.png" alt="" />
+        </div> -->
+      <!-- </div> -->
+
+      <div class="scenepie-container"></div>
+
+      <h3 style="font-style:italic;" class="click" @click="goPlay(play)">{{ playLabel }}</h3>
 
       <div class="ridges-container"></div>
 
@@ -164,6 +190,13 @@ export default class Scene extends Vue {
 </script>
 
 <style scoped>
+a {
+  text-decoration: none;
+  color: inherit;
+}
+a:hover {
+  opacity: 50%;
+}
 /* Just copying from Play */
 #sidebar {
   width: 250px;
@@ -194,6 +227,28 @@ export default class Scene extends Vue {
   opacity: 0.5;
 }
 .side-scene:hover {
+  opacity: 0.5;
+}
+
+.created {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+img {
+  height: 100%;
+  width: 100%;
+}
+
+.click:hover {
   opacity: 0.5;
 }
 </style>

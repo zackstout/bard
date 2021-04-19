@@ -2,8 +2,19 @@
   <div>
     <div id="sidebar">
       <div style="padding:1rem;">
+        <!-- <div style="display:flex; justify-content:flex-end;">
+          <div class="click" style="width:13px;height:13px;" @click="$router.push('/')">
+            <img src="@/assets/home_icon.png" alt="" />
+          </div>
+        </div> -->
         <div style="font-weight:bold;">CHARACTERS</div>
-        <div class="side-char" v-for="c in characters" :key="c" @click="goCharacter(c)">
+        <div
+          class="side-char"
+          v-for="c in characters"
+          :key="c"
+          @click="goCharacter(c)"
+          :style="{ 'font-weight': c === character ? 'bold' : 'normal' }"
+        >
           {{ c }}
         </div>
 
@@ -11,12 +22,34 @@
         <div class="side-scene" v-for="s in scenes" :key="s" @click="goScene(s)">
           {{ s }}
         </div>
+
+        <hr />
+
+        <div class="created">
+          <div>Created by</div>
+          <div>
+            <a href="https://www.zackstout.com">zackstout</a>
+          </div>
+        </div>
       </div>
     </div>
 
     <div id="main">
+      <div class="click" style="width:15px;height:15px;" @click="$router.push('/')">
+        <img src="@/assets/home_icon.png" alt="" />
+      </div>
+
+      <hr style="margin-bottom:0;" />
+
+      <!-- <div class="header"> -->
       <h2>{{ character }}</h2>
-      <h3 style="font-style:italic; margin-bottom:30px; cursor:pointer;" @click="goPlay(play)">{{ playLabel }}</h3>
+      <!-- <div class="click" style="width:20px;height:20px;" @click="$router.push('/')">
+          <img src="@/assets/home_icon.png" alt="" />
+        </div> -->
+      <!-- </div> -->
+      <h3 class="click" style="font-style:italic; margin-bottom:30px; cursor:pointer;" @click="goPlay(play)">
+        {{ playLabel }}
+      </h3>
 
       <div class="ridges-container" style="margin-bottom:20px;"></div>
 
@@ -187,6 +220,34 @@ export default class Character extends Vue {
   opacity: 0.5;
 }
 .side-scene:hover {
+  opacity: 0.5;
+}
+.created {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.5rem;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+a:hover {
+  opacity: 50%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+img {
+  height: 100%;
+  width: 100%;
+}
+
+.click:hover {
   opacity: 0.5;
 }
 </style>

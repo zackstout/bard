@@ -8,20 +8,16 @@
 import { Component, Vue } from "vue-property-decorator";
 
 /*
+
+maaaybe  indicate the scenes  that  a  char is in
+
 NOTES: If play or character or whatever is not in list, need to show "404" page
+
+[ ] TODO: Search!! ACROSS ALL PLAYS, from home
 
 [ ] scene arrows should cycle back/forward. the plays end where they begin.
 
-[ ] use tailwind!
-
-
-[ ] TODO: Add character view
-
-
-[ ] Clean up all hover/click
-
-[ ] Add all click/routing behavior
-
+[ ] Find 20 visibly distinct colors
 
 [ ] make "speeches" component (Play and Character....and Scene)
 
@@ -29,12 +25,9 @@ NOTES: If play or character or whatever is not in list, need to show "404" page
 
 [ ] turn off text shadow...in general, style combos dropdown
 
-[ ] TODO: Search!! ACROSS ALL PLAYS, from home
+[ ] use tailwind!
 
-[ ] Navigation duplicated issue
-(looks like emmpty catch after router.push should silence the error)
 
-[ ] filter by speaker/all in play/Speeches
 
 [ ] line numbers?
 
@@ -44,7 +37,6 @@ NOTES: If play or character or whatever is not in list, need to show "404" page
 [ ] Clean up chart margin weirdness (number of things...Height of first one overflowing top....stuff going off to right...)
 
 
-[ ] Find 20 visibly distinct colors
 
 [ ] Hmm...brutus_lucius interaction rate looks way too high...
 [ ] "ROSENCRANTZ:"
@@ -55,6 +47,8 @@ Like...Do we ever want to save data? In the json? Or just chill for now
 [ ] Sorting
 
 [ ] Expose other options (curve type e.g.)
+
+
 
 
 [x] TODO: Add character colors! (maybe text shadow to lines??)
@@ -79,6 +73,21 @@ Ooooh maybe like a clock that shows a sliver, and where in play it is. I like th
 
 [x] add sidebar to Scene (and char) view
 
+[x] TODO: Add character view
+[x] Clean up all hover/click
+[x] Add all click/routing behavior
+
+[x] Navigation duplicated issue
+(looks like emmpty catch after router.push should silence the error)
+
+[x] filter by speaker/all in play/Speeches
+
+[x] Bold the scene/char we are on in sidebar
+[x] Add "created by" to home and all sidebars
+[ ] (pull out sidebar??)
+[x] Add "home" button (or list of all plays somehow to Scene/Char)
+[x] hover indication  to  char list in Scene
+
 */
 
 @Component({})
@@ -98,7 +107,9 @@ export default class App extends Vue {}
   cursor: pointer;
 }
 .click:hover {
-  color: aqua;
+  /* color: aqua;
+   */
+  opacity: 0.5;
 }
 
 svg {
