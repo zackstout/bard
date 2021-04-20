@@ -9,6 +9,18 @@ import { Component, Vue } from "vue-property-decorator";
 
 /*
 
+google analytics
+
+Blank verse vs metric verse
+
+Extend to  other plays... Greek tragedies??
+
+[ ] experiment with using some kind of algo to generate char_colors
+
+[ ] update favicon
+
+[ ] fix issue with ridges in char and scene (top char) views....ugh!!
+
 maaaybe  indicate the scenes  that  a  char is in
 
 NOTES: If play or character or whatever is not in list, need to show "404" page

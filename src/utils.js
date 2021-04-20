@@ -53,9 +53,9 @@ export const CHAR_COLORS = [
   "maroon",
   "teal",
   "black",
-  // "white",
-  // "pink",
-  // "coral",
+  "coral",
+  "violet",
+  "purple",
 ];
 
 
@@ -798,7 +798,7 @@ export const runRidgelines = (playData, chunkSize = 10, width = 500, height = 30
   );
 
   var areaChartHeight = (1 + overlap) * (h / speakerScale.domain().length);
-  // console.log("hgt", areaChartHeight);
+  console.log("hgt", areaChartHeight);
   yScale.domain(d3.extent(spkrs3, y)).range([areaChartHeight, 0]);
 
   area.y0(yScale(0));
