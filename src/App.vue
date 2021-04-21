@@ -9,7 +9,13 @@ import { Component, Vue } from "vue-property-decorator";
 
 /*
 
-google analytics
+
+Is it obvious how ridgelines plot works?  I'm not sure it is
+Add little desc under each graph
+
+Uhhh use tailwind dude
+
+use typing too
 
 Blank verse vs metric verse
 
@@ -24,8 +30,6 @@ Extend to  other plays... Greek tragedies??
 maaaybe  indicate the scenes  that  a  char is in
 
 NOTES: If play or character or whatever is not in list, need to show "404" page
-
-[ ] TODO: Search!! ACROSS ALL PLAYS, from home
 
 [ ] scene arrows should cycle back/forward. the plays end where they begin.
 
@@ -100,6 +104,9 @@ Ooooh maybe like a clock that shows a sliver, and where in play it is. I like th
 [x] Add "home" button (or list of all plays somehow to Scene/Char)
 [x] hover indication  to  char list in Scene
 
+[x] google analytics
+[x] TODO: Search!! ACROSS ALL PLAYS, from home
+[x] basics of euripides plays working
 */
 
 @Component({})
@@ -190,5 +197,12 @@ svg {
   margin: 5px 0;
 
   font-size: 1.8rem;
+}
+
+.chart-desc {
+  font-size: 0.5rem;
+  text-align: center;
+  font-style: italic;
+  margin-bottom: 20px;
 }
 </style>

@@ -3,6 +3,39 @@ import d3 from "@/assets/d3";
 import { EVENTS, EventBus } from "@/EventBus";
 
 
+export const euripidesPlays = [
+  "alcestis",
+  "andromache",
+  "bacchan",
+  "cyclops",
+  "electra_eur",
+  "hecuba",
+  "helen",
+  "heracleidae",
+  "heracles",
+  "hippolytus",
+  "ion",
+  "iphi_aul",
+  "iph_taur",
+  "medea",
+  "orestes",
+  "phoenissae",
+  "rhesus",
+  "suppliants",
+  "troj_women"
+];
+
+export const sophoclesPlays = [
+  "ajax",
+  "antigone",
+  "electra",
+  "colonus",
+  "oedipus",
+  "philoct",
+  "trachinae"
+];
+
+
 export const plays = [
   { value: "macbeth", label: "Macbeth" },
   { value: "merchant", label: "Merchant of Venice" },
@@ -24,6 +57,15 @@ export const plays = [
   { value: "titus", label: "Titus Andronicus" },
   { value: "troilus_cressida", label: "Troilus & Cressida" },
   { value: "twelfth_night", label: "Twelfth Night" },
+  // ====================================
+  // { value: "alcestis", label: "Alcestis" },
+  // { value: "bacchan", label: "Bacchae" },
+  // { value: "andromache", label: "Andromache" },
+  // { value: "cyclops", label: "Cyclops" },
+  // { value: "electra_eur", label: "Electra" },
+  // { value: "hecuba", label: "Hecuba" },
+  // { value: "helen", label: "Helen" }
+
 ]
   .sort((a, b) => a.label > b.label ? 1 : -1);
 
@@ -130,6 +172,9 @@ export const getLinesBySpeakerByChunk = (scenes, chunkSize = 10, targetSpeaker =
 
   const speakersUse = targetSpeaker ? speakers.filter(s => s === targetSpeaker) : speakers;
 
+  const isGreek = euripidesPlays.includes(scenes[0].title);
+  // console.log("greek", isGreek);
+
   speakersUse.forEach((speaker) => {
     let chunkIdx = 0;
     let lineNo = 0;
@@ -139,7 +184,12 @@ export const getLinesBySpeakerByChunk = (scenes, chunkSize = 10, targetSpeaker =
       scene.lines.forEach((line) => {
         if (line.type === "text") lineNo++;
 
-        if (line.type === "text" && line.speaker === speaker) numLines++;
+        if (line.type === "text" && line.speaker === speaker) {
+          // console.log("words", line.value.split(" ").length)
+          const numWords = line.value.split(" ").length;
+          const inc = isGreek ? numWords : 1;
+          numLines += inc;
+        }
 
         if (lineNo % chunkSize === 0 && lineNo > 0) {
           // save chunk, start new one

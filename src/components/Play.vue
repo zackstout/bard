@@ -24,6 +24,9 @@
       <h2 style="text-align:center;">{{ playLabel }}</h2>
 
       <div class="ridges-container"></div>
+      <div class="chart-desc">
+        Shows the number of lines spoken by each character. Time advances along the x-axis.
+      </div>
 
       <div class="line"></div>
 
@@ -31,6 +34,9 @@
         <div class="chart-container">
           <h3>Characters</h3>
           <div class="characters-container"></div>
+          <div class="chart-desc">
+            Shows the number of lines spoken by each character.
+          </div>
         </div>
 
         <div>
@@ -38,6 +44,9 @@
             <h3>Interactions</h3>
 
             <div class="interactions-container"></div>
+            <div class="chart-desc">
+              Shows the number of interactions between characters (counted by lines spoken in succession).
+            </div>
           </div>
         </div>
       </div>
@@ -48,6 +57,9 @@
         <h3>Scenes</h3>
 
         <div class="pie-container"></div>
+        <div class="chart-desc">
+          Shows each scene broken down by number of lines per character.
+        </div>
       </div>
 
       <div class="line"></div>
@@ -109,6 +121,7 @@ import {
   runPiecharts,
   runLinegroups,
   groupLinesByNumber,
+  euripidesPlays,
 } from "@/utils";
 
 import axios from "axios";
@@ -143,9 +156,12 @@ export default class Play extends Vue {
   }
 
   loadData() {
+    const isGreek = euripidesPlays.includes(this.play);
+    const baseUrl = isGreek ? "./plays/euripides" : "./plays";
     axios
-      .get(`./plays/${this.play}.json`)
+      .get(`${baseUrl}/${this.play}.json`)
       .then((r) => {
+        console.log("got...", this.play, r.data);
         this.playData = r.data;
         const bd = getPlayBreakdown(this.playData);
 
